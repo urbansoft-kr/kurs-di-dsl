@@ -5,6 +5,8 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
 </p>
 
+*Read this in other languages: [English](README.md), [🇰🇷 한국어](README.ko.md)*
+
 > **A lightweight, zero-dependency Kotlin DI DSL for environments where heavy DI frameworks are unavailable.**
 
 When you are building KSP (Kotlin Symbol Processing) plugins, CLI tools, or lightweight SDKs, bringing in heavy DI containers like Spring or Koin is often overkill or technically impossible.
@@ -112,4 +114,4 @@ If a circular dependency exists, it will fail fast with a clear exception messag
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
