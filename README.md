@@ -69,7 +69,7 @@ val diContainer = KursDI()
   .build()
 
 // Retrieve and use your root component
-val sourceCollector = diContainer.get<SourceCollector>()
+val sourceCollector = diContainer<SourceCollector>()
 sourceCollector.collect()
 ```
 
