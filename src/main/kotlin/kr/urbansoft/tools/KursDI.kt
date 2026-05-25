@@ -35,24 +35,33 @@ class KursDI {
       listOf(externalInfra, infra, outPort, domainService, useCase, inboundAdapter, unspecified)
         .flatMap { it.store.list }
     while (pending.isNotEmpty()) {
-      val nextPending = mutableListOf<Store.Item>()
+      val nextPending = mutableListOf<Pair<Store.Item, DependencyNotReadyException>>()
       var progressMade = false
       for (item in pending) {
         try {
           map[item.type] = item.factory(injecting)
           progressMade = true
-        } catch (_: DependencyNotReadyException) {
-          nextPending.add(item)
+        } catch (e: DependencyNotReadyException) {
+          nextPending.add(item to e)
         }
       }
       if (!progressMade) {
-        val failedTypes = nextPending.joinToString("\n") { "  - ${it.type.simpleName}" }
+        val maybeRootCause =
+          nextPending
+            .filter { (_, exception) ->
+              nextPending.find { it.first.type == exception.missedKClass } == null
+            }
+            .joinToString("\n") { (_, exception) -> "  - ${exception.message}" }
+        val unresolvedDependencies =
+          nextPending.joinToString("\n") { (item, exception) ->
+            "  - ${item.type.qualifiedName}: ${exception.message}"
+          }
         error(
-          "Dependency resolution failed! A circular dependency exists, or the following objects are missing their dependencies:\n$failedTypes"
+          "Dependency resolution failed! A circular dependency exists, or the following objects are missing their dependencies:\n[Recommendation: Try resolving these first]\n${maybeRootCause}\n[Unresolved Dependencies]\n${unresolvedDependencies}"
         )
       }
 
-      pending = nextPending
+      pending = nextPending.map { (item, _) -> item }
     }
 
     return Injected(injecting.map)
@@ -84,7 +93,7 @@ class KursDI {
 
   class Injecting(val map: MutableMap<KClass<*>, Any>) {
     inline fun <reified T : Any> get(): T =
-      map[T::class] as? T ?: throw DependencyNotReadyException()
+      map[T::class] as? T ?: throw DependencyNotReadyException(T::class)
 
     inline operator fun <reified T : Any> invoke(): T = get()
   }
@@ -99,4 +108,5 @@ class KursDI {
   }
 }
 
-class DependencyNotReadyException : RuntimeException("Not ready", null, false, false)
+class DependencyNotReadyException(val missedKClass: KClass<*>) :
+  RuntimeException("${missedKClass.qualifiedName} is missing", null, false, false)

@@ -6,7 +6,7 @@ plugins {
 
 group = "kr.urbansoft.tools"
 
-version = "1.0.1"
+version = "1.0.2"
 
 repositories { mavenCentral() }
 
@@ -21,7 +21,7 @@ mavenPublishing {
 
   signAllPublications()
 
-  coordinates("kr.urbansoft.tools", "kurs-di-dsl", "1.0.1")
+  coordinates("kr.urbansoft.tools", "kurs-di-dsl", "1.0.2")
 
   pom {
     name.set("Kurs DI DSL")

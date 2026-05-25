@@ -26,7 +26,7 @@ KSP(Kotlin Symbol Processing) 플러그인, CLI 도구, 경량 SDK 등을 만들
 
 ```kotlin
 dependencies {
-  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.1")
+  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.2")
 }
 ```
 

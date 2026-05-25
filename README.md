@@ -26,7 +26,7 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.1")
+  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.2")
 }
 ```
 
