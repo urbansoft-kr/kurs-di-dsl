@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.internal.backend.common.serialization.metadata.DynamicTypeDeserializer.id
-
 plugins {
   kotlin("jvm") version "2.3.21"
   id("com.vanniktech.maven.publish") version "0.36.0"
@@ -22,13 +20,13 @@ mavenPublishing {
   publishToMavenCentral()
 
   signAllPublications()
-  
+
   coordinates("kr.urbansoft.tools", "kurs-di-dsl", "1.0.1")
 
   pom {
     name.set("Kurs DI DSL")
     description.set(
-        "A lightweight, zero-dependency Kotlin DI DSL for environments where heavy DI frameworks are unavailable."
+      "A lightweight, zero-dependency Kotlin DI DSL for environments where heavy DI frameworks are unavailable."
     )
     inceptionYear.set("2026")
     url.set("https://github.com/urbansoft-kr/kurs-di-dsl")
