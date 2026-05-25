@@ -25,9 +25,7 @@ mavenPublishing {
 
   pom {
     name.set("Kurs DI DSL")
-    description.set(
-      "A lightweight, zero-dependency Kotlin DI DSL for environments where heavy DI frameworks are unavailable."
-    )
+    description.set("A lightweight, zero-dependency Kotlin DI DSL for environments where heavy DI frameworks are unavailable.")
     inceptionYear.set("2026")
     url.set("https://github.com/urbansoft-kr/kurs-di-dsl")
     licenses {

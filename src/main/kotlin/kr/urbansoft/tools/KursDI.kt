@@ -11,9 +11,7 @@ class KursDI {
   private val useCase: UseCase = UseCase()
   private val inboundAdapter: InboundAdapter = InboundAdapter()
 
-  inline fun <reified T : Any> add(noinline factory: (Injecting) -> T): KursDI = apply {
-    unspecified.store.list.add(Store.Item(T::class, factory))
-  }
+  inline fun <reified T : Any> add(noinline factory: (Injecting) -> T): KursDI = apply { unspecified.store.list.add(Store.Item(T::class, factory)) }
 
   fun externalInfra(block: ExternalInfra.() -> Unit): KursDI = apply { block(externalInfra) }
 
@@ -31,9 +29,7 @@ class KursDI {
     val map: MutableMap<KClass<*>, Any> = mutableMapOf()
     val injecting = Injecting(map)
 
-    var pending =
-      listOf(externalInfra, infra, outPort, domainService, useCase, inboundAdapter, unspecified)
-        .flatMap { it.store.list }
+    var pending = listOf(externalInfra, infra, outPort, domainService, useCase, inboundAdapter, unspecified).flatMap { it.store.list }
     while (pending.isNotEmpty()) {
       val nextPending = mutableListOf<Pair<Store.Item, DependencyNotReadyException>>()
       var progressMade = false
@@ -48,14 +44,9 @@ class KursDI {
       if (!progressMade) {
         val maybeRootCause =
           nextPending
-            .filter { (_, exception) ->
-              nextPending.find { it.first.type == exception.missedKClass } == null
-            }
+            .filter { (_, exception) -> nextPending.find { it.first.type == exception.missedKClass } == null }
             .joinToString("\n") { (_, exception) -> "  - ${exception.message}" }
-        val unresolvedDependencies =
-          nextPending.joinToString("\n") { (item, exception) ->
-            "  - ${item.type.qualifiedName}: ${exception.message}"
-          }
+        val unresolvedDependencies = nextPending.joinToString("\n") { (item, exception) -> "  - ${item.type.qualifiedName}: ${exception.message}" }
         error(
           "Dependency resolution failed! A circular dependency exists, or the following objects are missing their dependencies:\n[Recommendation: Try resolving these first]\n${maybeRootCause}\n[Unresolved Dependencies]\n${unresolvedDependencies}"
         )
@@ -92,8 +83,7 @@ class KursDI {
   class InboundAdapter : Layer(Store())
 
   class Injecting(val map: MutableMap<KClass<*>, Any>) {
-    inline fun <reified T : Any> get(): T =
-      map[T::class] as? T ?: throw DependencyNotReadyException(T::class)
+    inline fun <reified T : Any> get(): T = map[T::class] as? T ?: throw DependencyNotReadyException(T::class)
 
     inline operator fun <reified T : Any> invoke(): T = get()
   }
@@ -101,12 +91,10 @@ class KursDI {
   class Injected(dependencies: Map<KClass<*>, Any>) {
     val dependencies: Map<KClass<*>, Any> = dependencies.toMap()
 
-    inline fun <reified T : Any> get(): T =
-      dependencies[T::class] as? T ?: error("Dependency not found: ${T::class.qualifiedName}")
+    inline fun <reified T : Any> get(): T = dependencies[T::class] as? T ?: error("Dependency not found: ${T::class.qualifiedName}")
 
     inline operator fun <reified T : Any> invoke(): T = get()
   }
 }
 
-class DependencyNotReadyException(val missedKClass: KClass<*>) :
-  RuntimeException("${missedKClass.qualifiedName} is missing", null, false, false)
+class DependencyNotReadyException(val missedKClass: KClass<*>) : RuntimeException("${missedKClass.qualifiedName} is missing", null, false, false)
