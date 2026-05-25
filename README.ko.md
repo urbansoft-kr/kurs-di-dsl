@@ -26,7 +26,7 @@ KSP(Kotlin Symbol Processing) 플러그인, CLI 도구, 경량 SDK 등을 만들
 
 ```kotlin
 dependencies {
-  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.0")
+  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.1")
 }
 ```
 
@@ -40,34 +40,38 @@ KursDI()를 호출한 뒤, 의존성을 설정하고, build()를 호출하여 DI
 import kr.urbansoft.tools.KursDI
 
 val diContainer = KursDI()
-  // 1. 외부 인프라 (예: KSP 환경 변수 등)
+  // 1. 외부 인프라
   .externalInfra {
     add<CodeGenerator> { codeGenerator }
     add<KSClassDeclaration> { classDeclaration }
     add<KSPLogger> { kspLogger }
   }
-  // 2. 인프라 (데이터베이스, 인메모리 스토어, 외부 서비스 등)
+  // 2. 인프라
   .infra {
     add { ContextAnnotationStore.create() }
     // `it()`을 사용하여 KursDI() 내에 정의된 의존성을 주입합니다.
     add { CodeGeneratorStore.create(it()) }
     add { Logger(it(), it(), it(), it()) }
   }
-  // 3. 아웃 포트 (외부와의 통신을 위한 아웃바운드 어댑터들)
+  // 3. 아웃 포트
   .outPort {
     add<LoadSourcePort> { LoadSourceAdapter(it()) }
     add<PrintLogPort> { PrintLogAdapter(it()) }
   }
-  // 4. 유즈케이스 (핵심 비즈니스 로직)
+  // 4. 도메인 서비스
+  .domainService {
+    add { DoSomethingDomainService() }
+  }
+  // 5. 유즈케이스
   .useCase {
     add<CollectSourceUseCase> { CollectSourceService(it(), it()) }
     add<GenerateFileUseCase> { GenerateFileService() }
   }
-  // 5. 인바운드 어댑터 (진입점)
+  // 6. 인바운드 어댑터
   .inboundAdapter {
     add { SourceCollector(it(), it(), it(), it(), it(), it()) }
   }
-  // 6. 빌드
+  // 7. 빌드
   .build()
 
 // 빌드된 컨테이너에서 원하는 인스턴스를 꺼내 사용하세요. 
@@ -87,6 +91,7 @@ val diContainer = KursDI()
   .add { Logger(it(), it(), it(), it()) }
   .add<LoadSourcePort> { LoadSourceAdapter(it()) }
   .add<PrintLogPort> { PrintLogAdapter(it()) }
+  .add { DoSomethingDomainService() }
   .add<CollectSourceUseCase> { CollectSourceService(it(), it()) }
   .add<GenerateFileUseCase> { GenerateFileService() }
   .add { SourceCollector(it(), it(), it(), it(), it(), it()) }

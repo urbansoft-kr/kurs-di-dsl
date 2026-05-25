@@ -26,7 +26,7 @@ Add the dependency to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.0")
+  implementation("kr.urbansoft.tools:kurs-di-dsl:1.0.1")
 }
 ```
 
@@ -40,34 +40,38 @@ Here is a real-world example from a KSP Plugin project:
 import kr.urbansoft.tools.KursDI
 
 val diContainer = KursDI()
-  // 1. External Infrastructure (e.g., KSP Environment variables)
+  // 1. External Infrastructure
   .externalInfra {
     add<CodeGenerator> { codeGenerator }
     add<KSClassDeclaration> { classDeclaration }
     add<KSPLogger> { kspLogger }
   }
-  // 2. Infrastructure (Databases, Stores, External Services)
+  // 2. Infrastructure
   .infra {
     add { ContextAnnotationStore.create() }
     // Use `it()` to seamlessly inject previously or subsequently defined dependencies
     add { CodeGeneratorStore.create(it()) }
     add { Logger(it(), it(), it(), it()) }
   }
-  // 3. Out Ports (Adapters for external communication)
+  // 3. Out Ports
   .outPort {
     add<LoadSourcePort> { LoadSourceAdapter(it()) }
     add<PrintLogPort> { PrintLogAdapter(it()) }
   }
-  // 4. Use Cases (Core Business Logic)
+  // 4. Domain Services
+  .domainService {
+    add { DoSomethingDomainService() }
+  }
+  // 5. Use Cases
   .useCase {
     add<CollectSourceUseCase> { CollectSourceService(it(), it()) }
     add<GenerateFileUseCase> { GenerateFileService() }
   }
-  // 5. Inbound Adapters (Entry points)
+  // 6. Inbound Adapters
   .inboundAdapter {
     add { SourceCollector(it(), it(), it(), it(), it(), it()) }
   }
-  // 6. Build the graph!
+  // 7. Build the graph!
   .build()
 
 // Retrieve and use your root component
@@ -87,6 +91,7 @@ val diContainer = KursDI()
   .add { Logger(it(), it(), it(), it()) }
   .add<LoadSourcePort> { LoadSourceAdapter(it()) }
   .add<PrintLogPort> { PrintLogAdapter(it()) }
+  .add { DoSomethingDomainService() }
   .add<CollectSourceUseCase> { CollectSourceService(it(), it()) }
   .add<GenerateFileUseCase> { GenerateFileService() }
   .add { SourceCollector(it(), it(), it(), it(), it(), it()) }
