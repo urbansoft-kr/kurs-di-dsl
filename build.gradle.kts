@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.internal.backend.common.serialization.metadata.DynamicTypeDeserializer.id
+
 plugins {
   kotlin("jvm") version "2.3.21"
   id("com.vanniktech.maven.publish") version "0.36.0"
@@ -6,7 +8,7 @@ plugins {
 
 group = "kr.urbansoft.tools"
 
-version = "1.0.0"
+version = "1.0.1"
 
 repositories { mavenCentral() }
 
@@ -21,7 +23,7 @@ mavenPublishing {
 
   signAllPublications()
   
-  coordinates("kr.urbansoft.tools", "kurs-di-dsl", "1.0.0")
+  coordinates("kr.urbansoft.tools", "kurs-di-dsl", "1.0.1")
 
   pom {
     name.set("Kurs DI DSL")
